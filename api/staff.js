@@ -2,7 +2,9 @@ const router = require("express").Router();
 const sql = require("../config/sql-server");
 
 router.get("/", async (_, res) => {
-  const staffList = (await sql.query("select * from NV")).recordsets[0];
+  const staffList = (await sql.query(
+    "select MSNV, HT, GT, PB.TENPB as PB from NV join PB on (NV.MSPB = PB.MSPB)"
+  )).recordsets[0];
   res.send(staffList);
 });
 

@@ -26,9 +26,12 @@ sql.connect(`mssql://${process.env.SQL_USER}:${process.env.SQL_PASS}@localhost/S
   app.use("/api/dept", require("./api/dept"));
 
   // Routing
-  app.get("/", (_, res) => {
-    res.sendFile(path.join(__dirname, "public", "index.html"));
-  });
+  const sendFile = (res, html) => {
+    res.sendFile(path.join(__dirname, "public", html + ".html"));
+  };
+  app.get("/", (_, res) => sendFile(res, "view-dept"));
+  app.get("/dept", (_, res) => sendFile(res, "view-dept"));
+  app.get("/staff", (_, res) => sendFile(res, "view-staff"));
 
   app.use((_, res) => res.status(404).send({ errorCode: 404 }));
   app.listen(3000, () => {

@@ -124,7 +124,7 @@
                   <div class="hr-line-dashed"></div>
                   <div class="form-group row">
                     <div class="col-sm-4 col-sm-offset-2">
-                      <button class="btn btn-white btn-sm" type="submit">Cancel</button>
+                      <button class="btn btn-white btn-sm" id="cancel-btn">Cancel</button>
                       <button class="btn btn-primary btn-sm" type="submit">Create</button>
                     </div>
                   </div>
@@ -155,6 +155,10 @@
     <!-- Page-Level Scripts -->
     <script>
       $(document).ready(() => {
+        $("#cancel-btn").click((e) => {
+          e.preventDefault();
+          location.href = "/dept";
+        });
         $("#dept-form").submit((e) => {
           e.preventDefault();
           const MSPB = e.target.MSPB.value;

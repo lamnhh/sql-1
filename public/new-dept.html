@@ -10,6 +10,7 @@
   <link href="/css/plugins/dataTables/datatables.min.css" rel="stylesheet" />
   <link href="/css/animate.css" rel="stylesheet" />
   <link href="/css/style.css" rel="stylesheet" />
+  <link href="/css/plugins/toastr/toastr.min.css" rel="stylesheet">
 </head>
 
 <body>
@@ -108,23 +109,24 @@
               </div>
               <div class="ibox-content">
                 <form id="dept-form">
-                  <div class="form-group row">
+                  <div class="form-group row" id="dept-id-div">
                     <label class="col-sm-2 col-form-label">Department ID</label>
                     <div class="col-sm-10">
-                      <input type="text" class="form-control" name="MSPB">
+                      <input type="text" class="form-control" name="MSPB" required>
+                      <span class="form-text m-b-none" id="id-err" style="color: red" hidden></span>
                     </div>
                   </div>
                   <div class="hr-line-dashed"></div>
                   <div class="form-group row">
                     <label class="col-sm-2 col-form-label">Department Name</label>
                     <div class="col-sm-10">
-                      <input type="text" class="form-control" name="TENPB">
+                      <input type="text" class="form-control" name="TENPB" required>
                     </div>
                   </div>
                   <div class="hr-line-dashed"></div>
                   <div class="form-group row">
                     <div class="col-sm-4 col-sm-offset-2">
-                      <button class="btn btn-white btn-sm" type="submit">Cancel</button>
+                      <button class="btn btn-white btn-sm" id="cancel-btn">Cancel</button>
                       <button class="btn btn-primary btn-sm" type="submit">Create</button>
                     </div>
                   </div>
@@ -135,8 +137,7 @@
         </div>
       </div>
       <div class="footer">
-        <div class="pull-right">10GB of <strong>250GB</strong> Free.</div>
-        <div><strong>Copyright</strong> Example Company &copy; 2014-2017</div>
+        <div><strong>Copyright</strong> Half of FakeNews &copy; 2018-2019</div>
       </div>
     </div>
 
@@ -151,10 +152,25 @@
     <!-- Custom and plugin javascript -->
     <script src="/js/inspinia.js"></script>
     <script src="/js/plugins/pace/pace.min.js"></script>
+    
+    <!-- Toastr -->
+    <script src="/js/plugins/toastr/toastr.min.js"></script>
 
     <!-- Page-Level Scripts -->
     <script>
       $(document).ready(() => {
+        toastr.options = {
+          closeButton: true,
+          progressBar: true,
+          showMethod: 'slideDown',
+          timeOut: 4000
+        };
+
+        $("#cancel-btn").click((e) => {
+          e.preventDefault();
+          location.href = "/dept";
+        });
+
         $("#dept-form").submit((e) => {
           e.preventDefault();
           const MSPB = e.target.MSPB.value;
@@ -171,10 +187,24 @@
           }).then((res) => {
             if (res.ok) {
               location.href = "/dept";
-            } else {
-              alert(res.statusText);
+              return;
             }
-          });
+            res.json().then(({ error }) => {
+              toastr.error(error, "Error");
+              if (error === "Invalid ID" || error === "Department ID already exists") {
+                $("#dept-id-div").addClass("has-error");
+                document.getElementById("dept-id-div").scrollIntoView({
+                  behavior: "smooth"
+                });
+                $("#id-err").show();
+                $("#id-err").text(error);
+                $("#dept-id-div input").focusout(() => {
+                  $("#id-err").hide();
+                  $("#dept-id-div").removeClass("has-error");
+                })
+              }
+            })
+          })
         });
       });
     </script>

@@ -209,9 +209,11 @@
           }).then((res) => {
             if (res.ok) {
               location.href = "/staff";
-            } else {
-              alert(res.statusText);
+              return;
             }
+            res.json().then(({error}) => {
+              alert(error);
+            })
           })
         });
       });

@@ -171,10 +171,12 @@
           }).then((res) => {
             if (res.ok) {
               location.href = "/dept";
-            } else {
-              alert(res.statusText);
+              return;
             }
-          });
+            res.json().then(({error}) => {
+              alert(error);
+            })
+          })
         });
       });
     </script>

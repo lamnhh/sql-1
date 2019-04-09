@@ -17,14 +17,20 @@ router.post("/", async (req, res) => {
     if ((await sql.query(`select * from NV where MSNV='${MSNV}'`)).recordsets[0].length !== 0) {
       throw Error("Staff ID already exists");
     }
-    if ((await sql.query(`select * from PB where MSPB=${MSPB}`)).recordsets[0].length === 0) {
-      throw Error("Invalid department");
+    if (isNaN(parseInt(GT)) || isNaN(parseInt(MSPB))) {
+      throw Error("Bad request");
     }
+
+    const request = new sql.Request();
+    request.input("MSNV", sql.Char, MSNV);
+    request.input("HT", sql.NVarChar, HT);
+    request.input("GT", sql.Int, parseInt(GT));
+    request.input("MSPB", sql.Int, parseInt(MSPB));
     const query = `
       insert into NV
       output inserted.MSNV, inserted.HT, inserted.GT, inserted.MSPB
-      values ('${MSNV}', N'${HT}', ${GT}, ${MSPB})`;
-    const obj = (await sql.query(query)).recordsets[0][0];
+      values (@MSNV, @HT, @GT, @MSPB)`;
+    const obj = (await request.query(query)).recordsets[0][0];
     res.send(obj);
   } catch (err) {
     res.status(400).send({

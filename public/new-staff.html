@@ -228,8 +228,8 @@
               location.href = "/staff";
               return;
             }
-            res.json().then(({error}) => {              
-              toastr.error('Error', error);
+            res.json().then(({ error }) => {              
+              toastr.error(error, "Error");
               if (error === "Invalid ID" || error === "Staff ID already exists") {
                 $("#staff-id-div").addClass("has-error");
                 document.getElementById("staff-id-div").scrollIntoView({

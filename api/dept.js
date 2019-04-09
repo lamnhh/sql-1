@@ -9,7 +9,10 @@ router.get("/", async (_, res) => {
 router.post("/", async (req, res) => {
   const { MSPB, TENPB } = req.body;
   try {
-    if ((await sql.query(`select * from PB where MSPB=${MSPB}`)).recordsets[0].length !== 0) {
+    if (isNaN(parseInt(MSPB))) {
+      throw Error("Invalid ID");
+    }
+    if ((await sql.query(`select * from PB where MSPB='${MSPB}'`)).recordsets[0].length !== 0) {
       throw Error("Department ID already exists");
     }
     const query = `
